@@ -1,0 +1,2674 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1220">
+<meta name="robots" content="noindex,nofollow">
+<title>OpenStick · Administración</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --bg:#0b1220;--bg-soft:#0f1a2e;--panel:#151f33;--panel-2:#1a2740;--panel-3:#213050;
+  --border:#2a3b58;--border-soft:#22314a;
+  --text:#eaf1fc;--muted:#93a5c0;--muted-2:#6f83a0;
+  --primary:#4f8cff;--primary-2:#3d74e0;
+  --success:#25c78b;--success-bg:#0f3329;--success-border:#1d6a52;
+  --danger:#f26d6d;--danger-bg:#3a1820;--danger-border:#7c3340;
+  --warning:#f5bb4f;--warning-bg:#3b2d14;--warning-border:#7d6127;
+  --radius:16px;--radius-sm:10px;
+  --shadow:0 18px 40px -24px rgba(0,0,0,.85);
+}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;min-height:100vh;color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;line-height:1.5;
+  background:
+    radial-gradient(1100px 620px at 12% -12%,#173059 0%,transparent 60%),
+    radial-gradient(900px 520px at 100% 0%,#12303f 0%,transparent 55%),
+    var(--bg);
+}
+h1,h2,h3{margin:0;line-height:1.25;letter-spacing:-.01em}
+p{margin:0}
+a{color:var(--primary)}
+.hidden{display:none!important}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+.muted{color:var(--muted);font-size:13px}
+.tiny{color:var(--muted-2);font-size:12px}
+
+/* ---------- topbar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  background:rgba(11,18,32,.82);border-bottom:1px solid var(--border-soft);
+}
+.topbar-inner{
+  max-width:1180px;margin:0 auto;padding:13px 20px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.brand{display:flex;align-items:center;gap:11px;margin-right:auto;min-width:0}
+.brand-mark{
+  width:36px;height:36px;border-radius:11px;flex:0 0 auto;
+  background:linear-gradient(145deg,var(--primary),#7b5cff);
+  display:grid;place-items:center;font-weight:800;font-size:15px;color:#fff;
+  box-shadow:0 8px 18px -10px var(--primary);
+}
+.brand-name{font-size:15px;font-weight:700;letter-spacing:.01em}
+.brand-sub{font-size:11.5px;color:var(--muted-2);margin-top:1px}
+.topbar-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.pill{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:6px 11px;border-radius:999px;font-size:12px;font-weight:600;
+  border:1px solid var(--border);background:var(--panel);color:var(--muted);white-space:nowrap;
+}
+.pill.ok{color:#a6f0d0;border-color:var(--success-border);background:var(--success-bg)}
+.pill.off{color:#ffc0c0;border-color:var(--danger-border);background:var(--danger-bg)}
+.pill.warn{color:#ffdf9d;border-color:var(--warning-border);background:var(--warning-bg)}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:24px 20px 56px}
+.stack{display:flex;flex-direction:column;gap:18px}
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,0)) ,var(--panel);
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;box-shadow:var(--shadow);
+}
+.card-head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;margin-bottom:16px;
+}
+.card-head h2{font-size:16.5px}
+.card-head .muted{margin-top:2px}
+.section-note{margin-top:14px}
+.divider{height:1px;background:var(--border-soft);border:0;margin:18px 0}
+
+/* ---------- login ---------- */
+.login-wrap{max-width:440px;margin:8vh auto 0}
+.login-card{padding:26px}
+.login-icon{
+  width:46px;height:46px;border-radius:13px;display:grid;place-items:center;
+  background:linear-gradient(145deg,var(--primary),#7b5cff);margin-bottom:16px;
+  box-shadow:0 10px 24px -14px var(--primary);font-size:21px;
+}
+.login-card h1{font-size:21px;margin-bottom:6px}
+
+/* ---------- forms ---------- */
+.field{margin-bottom:15px}
+.field:last-of-type{margin-bottom:0}
+.field label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:7px}
+.field .hint{color:var(--muted-2);font-size:12px;margin-top:6px}
+input,select{
+  width:100%;background:var(--bg-soft);color:var(--text);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:11px 12px;font:inherit;font-size:14px;outline:none;
+  transition:border-color .15s,box-shadow .15s,background .15s;
+  -webkit-appearance:none;appearance:none;
+}
+select{
+  background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+  padding-right:34px;
+}
+input:hover,select:hover{border-color:#3a5075}
+input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,140,255,.18);background:var(--bg)}
+input::placeholder{color:#5e7292}
+input:disabled,select:disabled{opacity:.55;cursor:not-allowed}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.row-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.inline{display:flex;gap:9px;flex-wrap:wrap}
+.inline input{flex:1 1 220px;min-width:0}
+
+/* ---------- buttons ---------- */
+button{
+  font:inherit;font-size:13.5px;font-weight:650;color:#fff;
+  border:1px solid transparent;border-radius:var(--radius-sm);
+  padding:10px 16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform .12s,filter .15s,opacity .15s,background .15s;
+  background:var(--panel-3);
+}
+button:hover:not(:disabled){filter:brightness(1.12)}
+button:active:not(:disabled){transform:translateY(1px)}
+button:disabled{opacity:.5;cursor:not-allowed}
+button:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-2));box-shadow:0 10px 22px -16px var(--primary)}
+.btn-success{background:linear-gradient(180deg,#1fbf85,#159468)}
+.btn-danger{background:linear-gradient(180deg,#e35f5f,#b84242)}
+.btn-ghost{background:transparent;border-color:var(--border);color:var(--muted)}
+.btn-ghost:hover:not(:disabled){background:var(--panel-2);color:var(--text)}
+.btn-sm{padding:7px 12px;font-size:12.5px}
+.btn-block{width:100%}
+.is-loading{position:relative;color:transparent!important;pointer-events:none}
+.is-loading::after{
+  content:"";position:absolute;width:16px;height:16px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.35);border-top-color:#fff;animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- status ---------- */
+.status-banner{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:14px 16px;border-radius:12px;border:1px solid var(--border);
+  background:var(--panel-2);margin-bottom:18px;
+}
+.status-banner .label{font-weight:700;font-size:14.5px}
+.status-banner .sub{color:var(--muted);font-size:12.5px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--warning);flex:0 0 auto}
+.dot.on{background:var(--success);box-shadow:0 0 0 4px rgba(37,199,139,.16)}
+.dot.off{background:var(--danger);box-shadow:0 0 0 4px rgba(242,109,109,.14)}
+.dot.unknown{background:var(--muted-2)}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:12px}
+.stat{
+  background:var(--panel-2);border:1px solid var(--border-soft);
+  border-radius:12px;padding:13px 14px;min-width:0;
+}
+.stat .k{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-2);font-weight:700;margin-bottom:7px}
+.stat .v{font-size:16px;font-weight:700;overflow-wrap:anywhere;line-height:1.3}
+.stat .v.small{font-size:13.5px;font-weight:600}
+.stat .v.mono{font-size:13.5px}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;
+  font-size:11.5px;font-weight:700;border:1px solid var(--border);background:var(--panel-3);color:var(--muted);
+}
+.badge.ok{color:#a6f0d0;border-color:var(--success-border);background:var(--success-bg)}
+.badge.bad{color:#ffc0c0;border-color:var(--danger-border);background:var(--danger-bg)}
+.badge.warn{color:#ffdf9d;border-color:var(--warning-border);background:var(--warning-bg)}
+.badge.info{color:#bcd6ff;border-color:#2f4f7d;background:#14243a}
+
+/* ---------- notices ---------- */
+.notice{
+  margin-top:14px;padding:11px 13px;border-radius:10px;font-size:13px;
+  display:none;overflow-wrap:anywhere;border:1px solid transparent;
+}
+.notice.show{display:block}
+.notice.success{color:#a9f2d4;background:var(--success-bg);border-color:var(--success-border)}
+.notice.error{color:#ffc2c2;background:var(--danger-bg);border-color:var(--danger-border)}
+.notice.warning{color:#ffdf9d;background:var(--warning-bg);border-color:var(--warning-border)}
+.notice.info{color:#c7dcff;background:#122238;border-color:#2b4a75}
+
+/* ---------- tables ---------- */
+.table-wrap{overflow-x:auto;border:1px solid var(--border-soft);border-radius:12px;background:var(--panel-2)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
+thead th{
+  text-align:left;padding:11px 13px;font-size:11.5px;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--muted-2);font-weight:700;
+  background:rgba(255,255,255,.025);border-bottom:1px solid var(--border-soft);white-space:nowrap;
+}
+tbody td{padding:11px 13px;border-bottom:1px solid var(--border-soft);vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:rgba(255,255,255,.022)}
+.empty-state{
+  padding:26px 16px;text-align:center;color:var(--muted);font-size:13.5px;
+  border:1px dashed var(--border);border-radius:12px;background:rgba(255,255,255,.012);
+}
+
+/* ---------- diagnostics ---------- */
+details.diag{border:1px solid var(--border-soft);border-radius:12px;background:var(--panel-2);margin-top:14px;overflow:hidden}
+details.diag>summary{
+  cursor:pointer;padding:13px 15px;font-weight:650;font-size:13.5px;
+  list-style:none;display:flex;align-items:center;gap:9px;user-select:none;
+}
+details.diag>summary::-webkit-details-marker{display:none}
+details.diag>summary::before{content:"▸";color:var(--muted);transition:transform .15s}
+details.diag[open]>summary::before{transform:rotate(90deg)}
+details.diag .diag-body{padding:0 15px 16px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px 18px;font-size:13px}
+.kv div{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px dashed var(--border-soft)}
+.kv span:first-child{color:var(--muted)}
+.kv span:last-child{font-weight:600;text-align:right;overflow-wrap:anywhere}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.chip{
+  font-size:12px;padding:5px 10px;border-radius:8px;
+  border:1px solid var(--border);background:var(--panel-3);color:var(--muted);
+}
+.chip.ok{color:#a6f0d0;border-color:var(--success-border);background:var(--success-bg)}
+.chip.bad{color:#ffc0c0;border-color:var(--danger-border);background:var(--danger-bg)}
+.list{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}
+.list li{margin:5px 0;overflow-wrap:anywhere}
+.list.warn li{color:#ffdf9d}
+.list.err li{color:#ffc2c2}
+
+/* ---------- toasts ---------- */
+.toasts{position:fixed;right:16px;bottom:16px;z-index:90;display:flex;flex-direction:column;gap:9px;max-width:min(380px,calc(100vw - 32px))}
+.toast{
+  padding:12px 14px;border-radius:11px;font-size:13px;font-weight:600;
+  border:1px solid var(--border);background:var(--panel-3);color:var(--text);
+  box-shadow:0 18px 40px -20px rgba(0,0,0,.9);
+  animation:toast-in .18s ease-out;overflow-wrap:anywhere;
+}
+.toast.success{background:var(--success-bg);border-color:var(--success-border);color:#c6f7e2}
+.toast.error{background:var(--danger-bg);border-color:var(--danger-border);color:#ffd2d2}
+.toast.warning{background:var(--warning-bg);border-color:var(--warning-border);color:#ffe8b6}
+@keyframes toast-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.terminal{
+  background:#050a14;border:1px solid var(--border);border-radius:10px;
+  padding:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:12.5px;min-height:180px;max-height:420px;overflow:auto;
+  white-space:pre-wrap;word-break:break-word;color:#cfe3ff;
+}
+.terminal .err{color:#ffc2c2}
+.file-row td{font-size:13px}
+.file-path{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tab{display:inline-block;text-decoration:none;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel-2);color:var(--muted);cursor:pointer;font-size:12.5px;font-weight:600}
+.tab.active{background:var(--panel-3);color:var(--text);border-color:var(--primary)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.card[data-tab]{display:none}
+.card[data-tab].active{display:block}
+
+@media (max-width:760px){
+  .wrap{padding:16px 13px 44px}
+  .topbar-inner{padding:11px 13px;gap:9px}
+  .brand-sub{display:none}
+  .card{padding:16px;border-radius:13px}
+  .row,.row-3{grid-template-columns:1fr}
+  .login-wrap{margin-top:4vh}
+  .card-head{align-items:flex-start}
+  button{padding:10px 13px}
+  .stats{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+.ctx-menu{
+  position:fixed;z-index:100;display:none;min-width:180px;
+  background:var(--panel);border:1px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow);padding:6px 0;font-size:13px;
+}
+.ctx-menu.show{display:block}
+.ctx-menu .ctx-item{
+  padding:8px 14px;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:8px;
+}
+.ctx-menu .ctx-item:hover{background:var(--panel-2)}
+.ctx-menu .ctx-item.danger{color:var(--danger)}
+.ctx-menu .ctx-sep{height:1px;background:var(--border-soft);margin:4px 0}
+</style>
+</head>
+<body>
+<div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">OS</div>
+      <div>
+        <div class="brand-name">OpenStick · Panel administrativo</div>
+        <div class="brand-sub">Hotspot Wi-Fi y diagnóstico del dispositivo</div>
+      </div>
+    </div>
+    <div class="topbar-actions" id="topbarActions" hidden>
+      <span class="pill" id="connPill"><span class="dot unknown" id="connDot"></span><span id="connText">—</span></span>
+      <span class="pill" id="updatedPill" hidden>Actualizado <span id="updatedText">—</span></span>
+      <button class="btn-ghost btn-sm" id="logoutBtn" type="button">Cerrar sesión</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ================= LOGIN ================= -->
+  <section class="login-wrap" id="loginView">
+    <div class="card login-card">
+      <div class="login-icon" aria-hidden="true">🔒</div>
+      <h1>Acceso administrativo</h1>
+      <p class="muted" style="margin-bottom:18px">
+        Introduce el token administrativo del servidor. La sesión se guarda en una cookie
+        HttpOnly: el token nunca se almacena en el navegador.
+      </p>
+      <form id="loginForm" autocomplete="off">
+        <div class="field">
+          <label for="tokenInput">Token de administración</label>
+          <input id="tokenInput" type="password" autocomplete="current-password"
+                 placeholder="Token administrativo" spellcheck="false" required>
+        </div>
+        <button class="btn-primary btn-block" id="loginBtn" type="submit">Conectar</button>
+      </form>
+      <div class="notice" id="loginNotice" role="alert"></div>
+    </div>
+  </section>
+
+  <!-- ================= APP ================= -->
+  <main id="appView" class="stack hidden" aria-busy="false">
+    <nav class="tabs top-tabs" id="topTabs" aria-label="Secciones" style="margin-bottom:18px">
+      <a class="tab active" data-tab="estado" href="/info/estado">Estado</a>
+      <a class="tab" data-tab="config" href="/info/config">Configuración</a>
+      <a class="tab" data-tab="mac" href="/info/mac">MAC</a>
+      <a class="tab" data-tab="clientes" href="/info/clientes">Clientes</a>
+      <a class="tab" data-tab="diag" href="/info/diag">Diagnóstico</a>
+      <a class="tab" data-tab="terminal" href="/info/terminal">Terminal</a>
+      <a class="tab" data-tab="archivos" href="/info/archivos">Archivos</a>
+      <a class="tab" data-tab="red" href="/info/red">DHCP/DNS</a>
+      <a class="tab" data-tab="pedidos" href="/info/pedidos">Pedidos</a>
+    </nav>
+
+    <!-- ESTADO DEL HOTSPOT -->
+    <section class="card" data-tab="estado">
+      <div class="card-head">
+        <div>
+          <h2>Estado del hotspot</h2>
+          <p class="muted">Datos reales tomados del backend Wi-Fi del sistema.</p>
+        </div>
+        <div class="inline">
+          <button class="btn-ghost btn-sm" id="refreshBtn" type="button">Actualizar</button>
+        </div>
+      </div>
+
+      <div class="status-banner">
+        <span class="dot unknown" id="statusDot"></span>
+        <div style="min-width:0">
+          <div class="label" id="statusLabel">Consultando estado…</div>
+          <div class="sub" id="statusSub">—</div>
+        </div>
+        <div style="margin-left:auto" class="chips" id="statusBadges"></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="k">SSID</div><div class="v" id="statSSID">—</div></div>
+        <div class="stat"><div class="k">Clientes</div><div class="v" id="statClients">—</div></div>
+        <div class="stat"><div class="k">Interfaz</div><div class="v mono" id="statInterface">—</div></div>
+        <div class="stat"><div class="k">MAC efectiva</div><div class="v mono" id="statMAC">—</div></div>
+        <div class="stat"><div class="k">Seguridad</div><div class="v small" id="statSecurity">—</div></div>
+        <div class="stat"><div class="k">IPv4</div><div class="v mono" id="statIPv4">—</div></div>
+      </div>
+
+      <div class="inline" style="margin-top:18px">
+        <button class="btn-success" id="enableBtn" type="button">Encender hotspot</button>
+        <button class="btn-danger" id="disableBtn" type="button">Apagar hotspot</button>
+      </div>
+
+      <div class="notice" id="statusNotice" role="status"></div>
+      <ul class="list warn" id="statusWarnings"></ul>
+    </section>
+
+    <!-- CONFIGURACION -->
+    <section class="card" data-tab="config">
+      <div class="card-head">
+        <div>
+          <h2>Configuración Wi-Fi</h2>
+          <p class="muted">Los cambios se guardan en el perfil del sistema y se verifican al aplicarse.</p>
+        </div>
+        <span class="badge info" id="configProfile">—</span>
+      </div>
+
+      <form id="configForm" autocomplete="off">
+        <div class="row">
+          <div class="field">
+            <label for="cfgSSID">Nombre de la red (SSID)</label>
+            <input id="cfgSSID" type="text" maxlength="32" placeholder="OpenStick-WiFi">
+            <div class="hint">Máximo 32 bytes.</div>
+          </div>
+          <div class="field">
+            <label for="cfgSecurity">Seguridad de la red</label>
+            <select id="cfgSecurity">
+              <option value="wpa2">WPA2-PSK (con contraseña)</option>
+              <option value="open">Abierta (sin contraseña)</option>
+            </select>
+            <div class="hint">«Abierta» deja el punto de acceso sin clave.</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="cfgPassword">Nueva contraseña WPA2</label>
+            <input id="cfgPassword" type="password" minlength="8" maxlength="63"
+                   placeholder="Dejar vacío para conservarla" autocomplete="new-password">
+            <div class="hint">8–63 caracteres. Estado: <strong id="cfgPasswordState">—</strong></div>
+          </div>
+          <div class="field">
+            <label for="cfgIPv4">Método IPv4 del punto de acceso</label>
+            <select id="cfgIPv4">
+              <option value="manual">manual — IP fija, sin DHCP</option>
+              <option value="shared">shared — DHCP + NAT para clientes</option>
+            </select>
+            <div class="hint">«shared» reparte direcciones IP y enruta el tráfico.</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="cfgInterface">Interfaz Wi-Fi</label>
+          <select id="cfgInterface"></select>
+          <div class="hint">Solo se listan interfaces Wi-Fi detectadas.</div>
+        </div>
+
+        <div class="inline">
+          <button class="btn-primary" id="configSaveBtn" type="submit">Guardar configuración</button>
+        </div>
+      </form>
+
+      <div class="notice" id="configNotice" role="status"></div>
+    </section>
+
+    <!-- MAC -->
+    <section class="card" data-tab="mac">
+      <div class="card-head">
+        <div>
+          <h2>Dirección MAC del Wi-Fi</h2>
+          <p class="muted">El resultado se verifica leyendo <span class="mono">/sys/class/net/&lt;if&gt;/address</span>.</p>
+        </div>
+      </div>
+
+      <div class="stats" style="margin-bottom:16px">
+        <div class="stat"><div class="k">MAC efectiva</div><div class="v mono" id="macEffective">—</div></div>
+        <div class="stat"><div class="k">MAC permanente</div><div class="v mono" id="macPermanent">—</div></div>
+        <div class="stat"><div class="k">MAC del perfil</div><div class="v mono" id="macProfileValue">—</div></div>
+      </div>
+
+      <form id="macForm" autocomplete="off">
+        <div class="field">
+          <label for="macInterface">Interfaz Wi-Fi</label>
+          <select id="macInterface"></select>
+          <div class="hint">Los cambios de MAC se aplican solo a la interfaz seleccionada.</div>
+        </div>
+        <div class="field">
+          <label for="macInput">Nueva dirección MAC</label>
+          <div class="inline">
+            <input id="macInput" type="text" class="mono" placeholder="02:11:22:33:44:55"
+                   spellcheck="false" inputmode="text">
+            <button class="btn-ghost" id="macRandomBtn" type="button">Generar aleatoria</button>
+          </div>
+          <div class="hint">Debe ser unicast. No se aceptan multicast, broadcast ni 00:00:00:00:00:00.</div>
+        </div>
+        <div class="inline">
+          <button class="btn-primary" id="macApplyBtn" type="submit">Aplicar MAC</button>
+        </div>
+      </form>
+
+      <div class="notice" id="macNotice" role="status"></div>
+      <div id="macResult"></div>
+    </section>
+
+    <!-- CLIENTES -->
+    <section class="card" data-tab="clientes">
+      <div class="card-head">
+        <div>
+          <h2>Clientes conectados</h2>
+          <p class="muted" id="clientsSub">Información real del dispositivo.</p>
+        </div>
+        <button class="btn-ghost btn-sm" id="clientsRefreshBtn" type="button">Actualizar clientes</button>
+      </div>
+
+      <div class="table-wrap" id="clientsWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>MAC</th><th>IP</th><th>Interfaz</th><th>Estado</th><th>Fuente</th>
+            </tr>
+          </thead>
+          <tbody id="clientsBody">
+            <tr><td colspan="5" class="muted">Consultando clientes…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="notice" id="clientsNotice" role="status"></div>
+      <ul class="list warn" id="clientsWarnings"></ul>
+    </section>
+
+    <!-- DIAGNOSTICO -->
+    <section class="card" data-tab="diag">
+      <div class="card-head">
+        <div>
+          <h2>Diagnóstico del dispositivo</h2>
+          <p class="muted">Herramientas, driver, capacidades del hardware y limitaciones detectadas.</p>
+        </div>
+        <button class="btn-ghost btn-sm" id="diagBtn" type="button">Ejecutar diagnóstico</button>
+      </div>
+
+      <div id="diagEmpty" class="empty-state">Pulsa «Ejecutar diagnóstico» para inspeccionar el dispositivo.</div>
+      <div id="diagResult" class="hidden"></div>
+    </section>
+
+    <!-- TERMINAL -->
+    <section class="card" data-tab="terminal">
+      <div class="card-head">
+        <div>
+          <h2>Terminal del sistema</h2>
+          <p class="muted">Ejecuta comandos en el dispositivo (como root). Usa con cuidado.</p>
+        </div>
+      </div>
+      <div class="field">
+        <label for="termInput">Comando</label>
+        <div class="inline">
+          <input id="termInput" class="mono" type="text" placeholder="uname -a" spellcheck="false">
+          <button class="btn-primary" id="termRunBtn" type="button">Ejecutar</button>
+        </div>
+        <div class="hint">Timeout máximo 120 s. Salida limitada a 64 KB.</div>
+      </div>
+      <pre class="terminal" id="termOutput">Esperando comando…</pre>
+    </section>
+
+    <!-- ARCHIVOS -->
+    <section class="card" data-tab="archivos">
+      <div class="card-head">
+        <div>
+          <h2>Explorador de archivos</h2>
+          <p class="muted">Gestiona el sistema de archivos del dispositivo.</p>
+        </div>
+      </div>
+      <div class="inline" style="margin-bottom:12px">
+        <input id="filePath" class="mono" type="text" value="/" placeholder="/ruta">
+        <button class="btn-ghost btn-sm" id="fileGoBtn" type="button">Ir</button>
+        <button class="btn-ghost btn-sm" id="fileUpBtn" type="button">Subir nivel</button>
+        <button class="btn-ghost btn-sm" id="fileRefreshBtn" type="button">Actualizar</button>
+      </div>
+      <div class="table-wrap" id="fileWrap">
+        <table>
+          <thead><tr><th>Nombre</th><th>Tipo</th><th>Tamaño</th><th>Modo</th><th>Modificado</th><th>Acciones</th></tr></thead>
+          <tbody id="fileBody"><tr><td colspan="6" class="muted">Cargando…</td></tr></tbody>
+        </table>
+      </div>
+      <div class="inline" style="margin-top:12px">
+        <input id="fileUploadInput" type="file">
+        <button class="btn-ghost btn-sm" id="fileUploadBtn" type="button">Subir archivo</button>
+      </div>
+      <div class="field" style="margin-top:14px">
+        <label for="fileEditor">Editor de texto</label>
+        <textarea id="fileEditor" rows="12" style="width:100%;background:var(--bg-soft);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px" placeholder="Contenido del archivo"></textarea>
+        <div class="hint">Ruta del archivo a leer/guardar: <input id="fileEditorPath" class="mono" type="text" placeholder="/etc/hosts" style="width:60%"></div>
+      </div>
+      <div class="inline">
+        <button class="btn-ghost btn-sm" id="fileReadBtn" type="button">Leer</button>
+        <button class="btn-primary btn-sm" id="fileSaveBtn" type="button">Guardar</button>
+        <button class="btn-danger btn-sm" id="fileDeleteBtn" type="button">Borrar</button>
+      </div>
+      <div class="notice" id="fileNotice" role="status"></div>
+    </section>
+
+    <!-- DHCP Y DNS -->
+    <section class="card" data-tab="red">
+      <div class="card-head">
+        <div>
+          <h2>DHCP y DNS</h2>
+          <p class="muted">Concesiones, procesos dnsmasq y configuración del sistema.</p>
+        </div>
+        <button class="btn-ghost btn-sm" id="netRefreshBtn" type="button">Actualizar</button>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="dhcp">DHCP</button>
+        <button class="tab" data-tab="dns">DNS</button>
+      </div>
+      <div class="tab-panel active" id="tab-dhcp">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>MAC</th><th>IP</th><th>Hostname</th><th>Caduca</th><th>Fuente</th></tr></thead>
+            <tbody id="dhcpBody"><tr><td colspan="5" class="muted">Cargando…</td></tr></tbody>
+          </table>
+        </div>
+        <div class="section-note">
+          <div class="badge info" style="margin-bottom:8px">Procesos dnsmasq</div>
+          <pre class="terminal" id="dhcpProcs" style="min-height:80px">—</pre>
+        </div>
+        <div class="inline" style="margin-top:12px">
+          <button class="btn-ghost btn-sm" id="dhcpRestartBtn" type="button">Reiniciar dnsmasq</button>
+        </div>
+      </div>
+      <div class="tab-panel" id="tab-dns">
+        <div class="kv" id="dnsKv"></div>
+
+        <div class="section-note" style="margin-top:14px">
+          <div class="badge info" style="margin-bottom:8px">Registros DNS locales (dnsmasq)</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Tipo</th><th>Nombre</th><th>Valor</th><th>Fuente</th></tr></thead>
+              <tbody id="dnsRecordsBody"><tr><td colspan="4" class="muted">Sin registros.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label>Añadir registro</label>
+          <div class="row">
+            <div class="field">
+              <select id="dnsRecType">
+                <option value="A">A (host → IP)</option>
+                <option value="CNAME">CNAME (alias)</option>
+                <option value="TXT">TXT</option>
+                <option value="PTR">PTR</option>
+                <option value="FORWARD">Forward (dominio → servidor)</option>
+              </select>
+            </div>
+            <div class="field">
+              <input id="dnsRecName" class="mono" type="text" placeholder="host.ejemplo">
+            </div>
+            <div class="field">
+              <input id="dnsRecValue" class="mono" type="text" placeholder="192.168.100.50">
+            </div>
+          </div>
+          <button class="btn-ghost btn-sm" id="dnsRecAddBtn" type="button" style="margin-top:8px">Añadir a la lista</button>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label>Servidores DNS upstream</label>
+          <div class="inline">
+            <input id="dnsUpstreamInput" class="mono" type="text" placeholder="8.8.8.8">
+            <button class="btn-ghost btn-sm" id="dnsUpstreamAddBtn" type="button">Añadir</button>
+          </div>
+          <div class="chips" id="dnsUpstreamChips" style="margin-top:8px"></div>
+        </div>
+
+        <div class="inline" style="margin-top:14px">
+          <button class="btn-primary" id="dnsApplyBtn" type="button">Aplicar configuración DNS</button>
+        </div>
+
+        <div class="section-note">
+          <div class="badge info" style="margin-bottom:8px">/etc/resolv.conf</div>
+          <pre class="terminal" id="dnsResolv" style="min-height:80px">—</pre>
+        </div>
+        <div class="notice" id="dnsNotice" role="status"></div>
+      </div>
+      <div class="notice" id="netNotice" role="status"></div>
+    </section>
+
+    <!-- PEDIDOS -->
+    <section class="card" data-tab="pedidos">
+      <div class="card-head">
+        <div>
+          <h2>Pedidos registrados</h2>
+          <p class="muted">Vista de solo lectura del servicio <span class="mono">/pedido/</span>.</p>
+        </div>
+        <button class="btn-ghost btn-sm" id="pedidosBtn" type="button">Actualizar pedidos</button>
+      </div>
+      <div class="status-banner" id="pedidosStatus" style="margin-bottom:14px">
+        <span class="dot unknown"></span><span class="sub">Consultando pedidos…</span>
+      </div>
+      <div id="pedidosList"></div>
+    </section>
+
+    <footer class="foot">OpenStick Web Administration · panel administrativo</footer>
+  </main>
+
+  <noscript>
+    <div class="card" style="margin-top:20px">
+      <strong>JavaScript deshabilitado.</strong> El panel administrativo necesita JavaScript para funcionar.
+    </div>
+  </noscript>
+</div>
+
+<script>
+"use strict";
+
+const $ = (id) => document.getElementById(id);
+const REFRESH_MS = 10000;
+const FIELD_LABELS = {
+  ssid: "SSID",
+  interface: "interfaz",
+  ipv4Method: "método IPv4",
+  security: "seguridad",
+  password: "contraseña",
+};
+
+const state = {
+  authenticated: false,
+  refreshing: false,
+  busy: false,
+  timer: null,
+  macInterface: "",
+  lastStatus: null,
+  lastConfig: null,
+  currentOpen: false,
+};
+
+class ApiError extends Error {
+  constructor(message, status) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status || 0;
+  }
+}
+
+/* ============================================================
+   HTTP
+   ============================================================ */
+
+async function request(path, options) {
+  options = options || {};
+
+  const init = {
+    method: options.method || "GET",
+    cache: "no-store",
+    credentials: "same-origin",
+    headers: Object.assign({ "Accept": "application/json" }, options.headers || {}),
+  };
+
+  if (options.body !== undefined) {
+    init.headers["Content-Type"] = "application/json";
+    init.body = JSON.stringify(options.body);
+  }
+
+  let response;
+
+  try {
+    response = await fetch("/api/hotspot/" + path, init);
+  } catch (error) {
+    throw new ApiError("No se pudo conectar con el servidor. Comprueba la red.", 0);
+  }
+
+  const raw = await response.text();
+  let data = null;
+
+  if (raw) {
+    try {
+      data = JSON.parse(raw);
+    } catch (error) {
+      throw new ApiError("El servidor devolvió una respuesta no válida (HTTP " + response.status + ").", response.status);
+    }
+  }
+
+  if (response.status === 401) {
+    endSession(false);
+    throw new ApiError("Sesión caducada. Vuelve a introducir el token.", 401);
+  }
+
+  if (!response.ok || (data && data.ok === false)) {
+    const message = (data && (data.error || data.message)) || ("Error HTTP " + response.status);
+    throw new ApiError(message, response.status);
+  }
+
+  return data || {};
+}
+
+/* ============================================================
+   UTILIDADES DE UI
+   ============================================================ */
+
+function setText(id, value) {
+  const node = $(id);
+  if (node) node.textContent = value;
+}
+
+function setValue(id, value) {
+  const node = $(id);
+  if (node && node.value !== value) node.value = value;
+}
+
+function isEditing(id) {
+  const node = $(id);
+  if (!node) return false;
+  return document.activeElement === node || node.dataset.dirty === "1";
+}
+
+function clearDirty(id) {
+  const node = $(id);
+  if (node) delete node.dataset.dirty;
+}
+
+function showNotice(id, message, type) {
+  const node = $(id);
+  if (!node) return;
+  node.textContent = message;
+  node.className = "notice show " + (type || "info");
+}
+
+function clearNotice(id) {
+  const node = $(id);
+  if (!node) return;
+  node.textContent = "";
+  node.className = "notice";
+}
+
+function toast(message, type) {
+  const box = $("toasts");
+  if (!box) return;
+
+  const node = document.createElement("div");
+  node.className = "toast " + (type || "");
+  node.textContent = message;
+  box.appendChild(node);
+
+  while (box.children.length > 4) box.firstElementChild.remove();
+
+  window.setTimeout(() => {
+    node.style.opacity = "0";
+    node.style.transform = "translateY(6px)";
+    window.setTimeout(() => node.remove(), 240);
+  }, 4500);
+}
+
+function setLoading(id, loading) {
+  const node = $(id);
+  if (!node) return;
+
+  if (loading) {
+    node.classList.add("is-loading");
+    node.disabled = true;
+  } else {
+    node.classList.remove("is-loading");
+    node.disabled = false;
+  }
+}
+
+function makeBadge(text, kind) {
+  const badge = document.createElement("span");
+  badge.className = "badge " + (kind || "");
+  badge.textContent = text;
+  return badge;
+}
+
+function renderList(id, items) {
+  const node = $(id);
+  if (!node) return;
+
+  node.replaceChildren();
+
+  (items || []).forEach((text) => {
+    const item = document.createElement("li");
+    item.textContent = text;
+    node.appendChild(item);
+  });
+}
+
+function backendLabel(value) {
+  switch (value) {
+    case "networkmanager": return "NetworkManager";
+    case "hostapd": return "hostapd";
+    case "none": return "sin backend";
+    default: return value || "—";
+  }
+}
+
+function timeOf(iso) {
+  const date = new Date(iso);
+  if (isNaN(date.getTime())) return "—";
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+}
+
+function markUpdated() {
+  const pill = $("updatedPill");
+  if (pill) pill.hidden = false;
+  setText("updatedText", new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+}
+
+/* ============================================================
+   OPERACIONES
+   ============================================================ */
+
+async function runOperation(buttonId, noticeId, task) {
+  if (state.busy) {
+    toast("Ya hay una operación en curso. Espera a que termine.", "warning");
+    return;
+  }
+
+  state.busy = true;
+  setLoading(buttonId, true);
+  clearNotice(noticeId);
+
+  try {
+    await task();
+  } catch (error) {
+    if (error.status !== 401) {
+      showNotice(noticeId, error.message, "error");
+      toast(error.message, "error");
+    }
+  } finally {
+    state.busy = false;
+    setLoading(buttonId, false);
+    syncHotspotButtons();
+  }
+}
+
+function syncHotspotButtons() {
+  const enabled = !!(state.lastStatus && state.lastStatus.enabled);
+  const enable = $("enableBtn");
+  const disable = $("disableBtn");
+
+  if (enable) enable.disabled = state.busy || enabled;
+  if (disable) disable.disabled = state.busy || !enabled;
+}
+
+/* ============================================================
+   SESION
+   ============================================================ */
+
+async function login(event) {
+  if (event) event.preventDefault();
+
+  const token = $("tokenInput").value.trim();
+
+  if (!token) {
+    showNotice("loginNotice", "Introduce el token administrativo.", "error");
+    return;
+  }
+
+  setLoading("loginBtn", true);
+  clearNotice("loginNotice");
+
+  try {
+    await request("session", { method: "POST", body: { token: token } });
+    $("tokenInput").value = "";
+    await startApp();
+  } catch (error) {
+    showNotice("loginNotice", error.message, "error");
+  } finally {
+    setLoading("loginBtn", false);
+  }
+}
+
+async function startApp() {
+  state.authenticated = true;
+  $("loginView").classList.add("hidden");
+  $("appView").classList.remove("hidden");
+  $("topbarActions").hidden = false;
+
+  clearNotice("loginNotice");
+  await refreshAll(true);
+
+  try {
+    await loadMAC();
+  } catch (error) {
+    if (error.status !== 401) toast(error.message, "warning");
+  }
+
+  try { await loadFiles("/"); } catch (error) { /* noop */ }
+  try { await loadNetwork(); } catch (error) { /* noop */ }
+
+  connectEvents();
+
+  const parts = (location.pathname || "").split("/").filter(Boolean);
+  const last = parts[parts.length - 1];
+  if (parts[0] === "info" && last && last !== "info") activateTab(last);
+  else activateTab("estado");
+
+  startTimer();
+}
+
+function endSession(userInitiated) {
+  state.authenticated = false;
+  stopTimer();
+  disconnectEvents();
+
+  $("appView").classList.add("hidden");
+  $("loginView").classList.remove("hidden");
+  $("topbarActions").hidden = true;
+
+  ["statusNotice", "configNotice", "macNotice", "clientsNotice"].forEach(clearNotice);
+  renderList("statusWarnings", []);
+  renderList("clientsWarnings", []);
+
+  const result = $("macResult");
+  if (result) result.replaceChildren();
+
+  if (userInitiated) {
+    showNotice("loginNotice", "Sesión cerrada correctamente.", "warning");
+    toast("Sesión cerrada", "success");
+  }
+}
+
+async function logout() {
+  try {
+    await request("session", { method: "DELETE" });
+  } catch (error) {
+    /* El cierre de sesión local debe ocurrir igualmente. */
+  }
+  endSession(true);
+}
+
+function startTimer() {
+  stopTimer();
+  state.timer = window.setInterval(() => {
+    if (document.hidden || state.busy || state.refreshing) return;
+    refreshAll(false);
+  }, REFRESH_MS);
+}
+
+function stopTimer() {
+  if (state.timer) {
+    window.clearInterval(state.timer);
+    state.timer = null;
+  }
+}
+
+/* ============================================================
+   ACTUALIZACION GENERAL
+   ============================================================ */
+
+async function refreshAll(showErrors) {
+  if (!state.authenticated || state.refreshing) return;
+
+  state.refreshing = true;
+  $("appView").setAttribute("aria-busy", "true");
+
+  try {
+    const results = await Promise.allSettled([loadStatus(), loadConfig(), loadClients()]);
+    const failures = results.filter(
+      (result) => result.status === "rejected" && result.reason && result.reason.status !== 401
+    );
+
+    if (failures.length && showErrors) {
+      toast("Algunas consultas fallaron: " + failures[0].reason.message, "warning");
+    }
+
+    markUpdated();
+  } finally {
+    state.refreshing = false;
+    $("appView").setAttribute("aria-busy", "false");
+  }
+}
+
+/* ============================================================
+   ESTADO DEL HOTSPOT
+   ============================================================ */
+
+async function loadStatus() {
+  const data = await request("status");
+  state.lastStatus = data;
+  renderStatus(data);
+  return data;
+}
+
+function renderStatus(data) {
+  const enabled = !!data.enabled;
+  const dot = $("statusDot");
+
+  if (dot) dot.className = "dot " + (enabled ? "on" : "off");
+
+  setText("statusLabel", enabled ? "Hotspot encendido" : "Hotspot apagado");
+
+  const parts = [];
+  if (data.backend) parts.push(backendLabel(data.backend));
+  if (data.service) parts.push(data.service);
+  if (data.updatedAt) parts.push("actualizado a las " + timeOf(data.updatedAt));
+  setText("statusSub", parts.join(" · ") || "—");
+
+  setText("statSSID", data.ssid || "—");
+  setText("statClients", typeof data.clients === "number" ? data.clients : 0);
+  setText("statInterface", data.interface || "—");
+  setText("statMAC", data.mac || "—");
+  setText("statSecurity", data.security || "—");
+  setText("statIPv4", data.ipv4Address && data.ipv4Address.length ? data.ipv4Address.join(", ") : "—");
+
+  const badges = $("statusBadges");
+  if (badges) {
+    badges.replaceChildren();
+    if (data.backend) badges.appendChild(makeBadge(backendLabel(data.backend), "info"));
+    if (data.mode) badges.appendChild(makeBadge("modo " + data.mode, "info"));
+    if (data.profile) badges.appendChild(makeBadge(data.profile, "info"));
+    if (data.ipv4Method) badges.appendChild(makeBadge("IPv4 " + data.ipv4Method, data.ipv4Method === "shared" ? "ok" : "warn"));
+  }
+
+  const connDot = $("connDot");
+  const connPill = $("connPill");
+
+  if (connDot) connDot.className = "dot " + (enabled ? "on" : "off");
+  if (connPill) connPill.className = "pill " + (enabled ? "ok" : "off");
+  setText("connText", enabled ? "Hotspot activo" : "Hotspot inactivo");
+
+  renderList("statusWarnings", data.warnings || []);
+
+  setText("macEffective", data.mac || "—");
+  setText("macPermanent", data.permanentMac || "—");
+
+  syncHotspotButtons();
+}
+
+async function toggleHotspot(action) {
+  const enabling = action === "enable";
+
+  const question = enabling
+    ? "¿Encender el hotspot Wi-Fi ahora?"
+    : "¿Apagar el hotspot Wi-Fi? Los clientes conectados se desconectarán.";
+
+  if (!window.confirm(question)) return;
+
+  await runOperation(enabling ? "enableBtn" : "disableBtn", "statusNotice", async () => {
+    const response = await request(action, { method: "POST" });
+    const message = response.message || "Operación completada";
+
+    showNotice("statusNotice", message, "success");
+    toast(message, "success");
+
+    await refreshAll(false);
+    await loadMAC();
+  });
+}
+
+/* ============================================================
+   CONFIGURACION WIFI
+   ============================================================ */
+
+function fillInterfaceSelect(id, interfaces, selected) {
+  const select = $(id);
+  if (!select) return;
+
+  const list = Array.isArray(interfaces) ? interfaces.slice() : [];
+
+  if (selected && list.indexOf(selected) === -1) list.unshift(selected);
+
+  const signature = list.join("|");
+
+  if (select.dataset.signature !== signature) {
+    select.replaceChildren();
+
+    if (!list.length) {
+      const option = document.createElement("option");
+      option.value = "";
+      option.textContent = "No se detectaron interfaces Wi-Fi";
+      select.appendChild(option);
+    } else {
+      list.forEach((name) => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        select.appendChild(option);
+      });
+    }
+
+    select.dataset.signature = signature;
+  }
+
+  if (selected && !isEditing(id)) {
+    select.value = selected;
+  }
+}
+
+function syncSecurityFields() {
+  const select = $("cfgSecurity");
+  const password = $("cfgPassword");
+
+  if (!select || !password) return;
+
+  const open = select.value === "open";
+
+  password.disabled = open;
+  password.placeholder = open ? "No se usa en una red abierta" : "Dejar vacío para conservarla";
+
+  if (open) password.value = "";
+}
+
+async function loadConfig() {
+  const response = await request("config");
+  const data = response.data || {};
+
+  state.lastConfig = data;
+  state.currentOpen = data.securityMode === "open";
+
+  setText("configProfile", data.profile ? ("perfil: " + data.profile) : backendLabel(data.backend));
+  setText(
+    "cfgPasswordState",
+    data.securityMode === "open"
+      ? "red abierta"
+      : (data.passwordConfigured ? "configurada" : "sin contraseña"),
+  );
+
+  fillInterfaceSelect("cfgInterface", data.availableInterfaces, data.interface);
+  fillInterfaceSelect("macInterface", data.availableInterfaces, state.macInterface || data.interface);
+
+  if (!state.macInterface && data.interface) state.macInterface = data.interface;
+
+  if (!isEditing("cfgSSID")) {
+    setValue("cfgSSID", data.ssid || "");
+    clearDirty("cfgSSID");
+  }
+
+  if (!isEditing("cfgIPv4")) {
+    setValue("cfgIPv4", data.ipv4Method || "manual");
+    clearDirty("cfgIPv4");
+  }
+
+  if (!isEditing("cfgSecurity")) {
+    setValue("cfgSecurity", data.securityMode === "open" ? "open" : "wpa2");
+    clearDirty("cfgSecurity");
+  }
+
+  if (!isEditing("cfgInterface") && data.interface) {
+    setValue("cfgInterface", data.interface);
+  }
+
+  syncSecurityFields();
+}
+
+async function saveConfig(event) {
+  event.preventDefault();
+
+  const ssid = $("cfgSSID").value.trim();
+  const password = $("cfgPassword").value;
+  const iface = $("cfgInterface").value;
+  const method = $("cfgIPv4").value;
+  const security = $("cfgSecurity").value;
+
+  if (!ssid) {
+    showNotice("configNotice", "El SSID es obligatorio.", "error");
+    return;
+  }
+
+  if (security === "open" && password) {
+    showNotice("configNotice", "Una red abierta no admite contraseña.", "error");
+    return;
+  }
+
+  if (security === "wpa2" && password && (password.length < 8 || password.length > 63)) {
+    showNotice("configNotice", "La contraseña debe tener entre 8 y 63 caracteres.", "error");
+    return;
+  }
+
+  if (security === "wpa2" && !password && state.currentOpen) {
+    showNotice("configNotice", "Para activar WPA2 escribe una contraseña de 8 a 63 caracteres.", "error");
+    return;
+  }
+
+  const payload = {
+    ssid: ssid,
+    ipv4Method: method,
+    security: security,
+  };
+
+  if (security === "wpa2" && password) payload.password = password;
+  if (iface) payload.interface = iface;
+
+  const warning = security === "open"
+    ? "La red quedará ABIERTA, sin contraseña. ¿Continuar?"
+    : "¿Guardar la configuración Wi-Fi?";
+
+  if (!window.confirm(warning + " Si el hotspot está activo se reiniciará.")) return;
+
+  await runOperation("configSaveBtn", "configNotice", async () => {
+    const response = await request("config", { method: "POST", body: payload });
+    const changed = (response.data && response.data.changed) || [];
+
+    const description = changed.length
+      ? changed.map((change) => FIELD_LABELS[change.field] || change.field).join(", ")
+      : "sin cambios";
+
+    $("cfgPassword").value = "";
+
+    ["cfgSSID", "cfgPassword", "cfgInterface", "cfgIPv4", "cfgSecurity"].forEach(clearDirty);
+
+    showNotice("configNotice", (response.message || "Configuración guardada") + " · cambios: " + description, "success");
+    toast("Configuración guardada y verificada", "success");
+
+    await refreshAll(false);
+  });
+}
+
+
+/* ============================================================
+   DIRECCION MAC
+   ============================================================ */
+
+const MAC_REGEX = /^([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}$/;
+
+function normalizeMAC(value) {
+  const text = (value || "").trim().replace(/-/g, ":").toLowerCase();
+
+  if (!MAC_REGEX.test(text)) return "";
+
+  const octets = text.split(":").map((part) => parseInt(part, 16));
+
+  if (octets.some((octet) => isNaN(octet) || octet < 0 || octet > 255)) return "";
+
+  if (octets[0] & 0x01) return "";
+
+  if (octets.every((octet) => octet === 0)) return "";
+
+  return octets.map((octet) => octet.toString(16).padStart(2, "0")).join(":");
+}
+
+function generateRandomMAC() {
+  const octets = new Uint8Array(6);
+
+  if (window.crypto && window.crypto.getRandomValues) {
+    window.crypto.getRandomValues(octets);
+  } else {
+    for (let index = 0; index < octets.length; index += 1) {
+      octets[index] = Math.floor(Math.random() * 256);
+    }
+  }
+
+  // Unicast (bit 0 = 0) y administrada localmente (bit 1 = 1).
+  octets[0] = (octets[0] & 0xfc) | 0x02;
+
+  if (octets.every((octet) => octet === 0)) octets[5] = 0x01;
+
+  return Array.from(octets)
+    .map((octet) => octet.toString(16).padStart(2, "0"))
+    .join(":");
+}
+
+function setMACFields(data) {
+  setText("macEffective", data.mac || "—");
+  setText("macPermanent", data.permanentMac || "—");
+  setText("macProfileValue", data.clonedMacAddress || "—");
+}
+
+async function loadMAC() {
+  const query = state.macInterface ? "?interface=" + encodeURIComponent(state.macInterface) : "";
+  const response = await request("mac" + query);
+  const data = response.data || {};
+
+  if (data.interface) {
+    state.macInterface = data.interface;
+
+    const select = $("macInterface");
+
+    if (select && !isEditing("macInterface")) {
+      select.value = data.interface;
+    }
+  }
+
+  setMACFields(data);
+
+  return data;
+}
+
+function renderMACResult(data) {
+  const host = $("macResult");
+  if (!host) return;
+
+  host.replaceChildren();
+
+  const details = document.createElement("details");
+  details.className = "diag";
+  details.open = true;
+
+  const summary = document.createElement("summary");
+  summary.textContent = "Resultado del cambio de MAC";
+  details.appendChild(summary);
+
+  const body = document.createElement("div");
+  body.className = "diag-body";
+
+  const grid = document.createElement("div");
+  grid.className = "kv";
+
+  const rows = [
+    ["Interfaz", data.interface],
+    ["Backend", backendLabel(data.backend)],
+    ["Perfil", data.profile],
+    ["MAC solicitada", data.requestedMac],
+    ["MAC efectiva", data.effectiveMac],
+    ["MAC anterior", data.previousMac],
+    ["Aplicada", data.applied ? "sí" : "no"],
+    ["Verificada", data.verified ? "sí" : "no"],
+    ["Persistente", data.persistent ? "sí (sobrevive reinicios)" : "no"],
+    ["Temporal", data.temporary ? "sí (se pierde al reiniciar)" : "no"],
+    ["Pendiente", data.pending ? "se aplicará al encender el hotspot" : "no"],
+  ];
+
+  rows.forEach(([key, value]) => {
+    if (value === undefined || value === null || value === "") return;
+
+    const row = document.createElement("div");
+    const label = document.createElement("span");
+    label.textContent = key;
+    const content = document.createElement("span");
+    content.textContent = value;
+    row.append(label, content);
+    grid.appendChild(row);
+  });
+
+  body.appendChild(grid);
+
+  if (data.note) {
+    const note = document.createElement("p");
+    note.className = "muted section-note";
+    note.textContent = data.note;
+    body.appendChild(note);
+  }
+
+  details.appendChild(body);
+  host.appendChild(details);
+}
+
+async function applyMAC(event) {
+  event.preventDefault();
+
+  const raw = $("macInput").value;
+  const normalized = normalizeMAC(raw);
+
+  if (!normalized) {
+    showNotice(
+      "macNotice",
+      "Dirección MAC no válida. Usa el formato AA:BB:CC:DD:EE:FF, unicast y distinta de 00:00:00:00:00:00.",
+      "error",
+    );
+    return;
+  }
+
+  const backends = state.lastStatus && state.lastStatus.backend;
+  const interfaceLabel = state.macInterface || (state.lastStatus && state.lastStatus.interface) || "la interfaz Wi-Fi";
+
+  let question = "¿Aplicar la MAC " + normalized + " a " + interfaceLabel + "?";
+
+  if (state.lastStatus && state.lastStatus.enabled) {
+    question +=
+      "\n\nEl hotspot está encendido: se reiniciará para aplicar el cambio y los clientes se desconectarán temporalmente.";
+  }
+
+  if (!window.confirm(question)) return;
+
+  await runOperation("macApplyBtn", "macNotice", async () => {
+    const payload = { mac: normalized };
+
+    if (state.macInterface) payload.interface = state.macInterface;
+
+    const response = await request("mac", { method: "POST", body: payload });
+    const data = response.data || {};
+
+    renderMACResult(data);
+
+    const message = response.message || "Dirección MAC aplicada";
+    showNotice("macNotice", message, "success");
+    toast(message, "success");
+
+    $("macInput").value = "";
+
+    await refreshAll(false);
+    await loadMAC();
+  });
+}
+
+/* ============================================================
+   CLIENTES
+   ============================================================ */
+
+function clientStateBadge(client) {
+  if (client.connected) return makeBadge("conectado", "ok");
+  return makeBadge("observado", "warn");
+}
+
+function sourceLabel(source) {
+  if (!source) return "—";
+
+  return source
+    .split("+")
+    .map((part) => {
+      switch (part) {
+        case "nl80211": return "nl80211";
+        case "dhcp": return "DHCP";
+        case "arp": return "ARP";
+        default: return part;
+      }
+    })
+    .join(" + ");
+}
+
+function renderClients(data) {
+  const body = $("clientsBody");
+  if (!body) return;
+
+  body.replaceChildren();
+
+  const clients = Array.isArray(data.clients) ? data.clients : [];
+
+  if (!clients.length) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 5;
+    cell.className = "muted";
+    cell.textContent = data.available
+      ? "No hay clientes asociados ni concesiones DHCP/ARP en esta interfaz."
+      : "El hotspot está apagado: no hay clientes.";
+    row.appendChild(cell);
+    body.appendChild(row);
+  } else {
+    clients.forEach((client) => {
+      const row = document.createElement("tr");
+
+      const mac = document.createElement("td");
+      mac.className = "mono";
+      mac.textContent = client.mac || "—";
+
+      const ip = document.createElement("td");
+      ip.className = "mono";
+      ip.textContent = client.ip || "—";
+
+      const iface = document.createElement("td");
+      iface.className = "mono";
+      iface.textContent = client.interface || "—";
+
+      const status = document.createElement("td");
+      status.appendChild(clientStateBadge(client));
+
+      if (client.expiresIn) {
+        const hint = document.createElement("span");
+        hint.className = "tiny";
+        hint.style.marginLeft = "6px";
+        hint.textContent = "caduca en " + client.expiresIn;
+        status.appendChild(hint);
+      }
+
+      const source = document.createElement("td");
+      source.className = "muted";
+      source.textContent = sourceLabel(client.source);
+
+      if (client.hostname) {
+        const hint = document.createElement("span");
+        hint.className = "tiny";
+        hint.style.display = "block";
+        hint.textContent = client.hostname;
+        source.appendChild(hint);
+      }
+
+      row.append(mac, ip, iface, status, source);
+      body.appendChild(row);
+    });
+  }
+
+  const total = typeof data.total === "number" ? data.total : clients.length;
+
+  setText(
+    "clientsSub",
+    data.available
+      ? total + (total === 1 ? " cliente detectado" : " clientes detectados") +
+        (data.interface ? " en " + data.interface : "")
+      : "El hotspot está apagado: no hay clientes asociados.",
+  );
+
+  renderList("clientsWarnings", data.warnings || []);
+}
+
+async function loadClients() {
+  const data = await request("clients");
+  renderClients(data);
+  return data;
+}
+
+/* ============================================================
+   DIAGNOSTICO
+   ============================================================ */
+
+function appendKV(host, pairs) {
+  const grid = document.createElement("div");
+  grid.className = "kv";
+
+  pairs.forEach(([key, value]) => {
+    if (value === undefined || value === null || value === "") return;
+
+    const row = document.createElement("div");
+    const label = document.createElement("span");
+    label.textContent = key;
+    const content = document.createElement("span");
+    content.textContent = value;
+    row.append(label, content);
+    grid.appendChild(row);
+  });
+
+  host.appendChild(grid);
+}
+
+function appendSection(host, title, build) {
+  const box = document.createElement("div");
+  box.className = "section-note";
+
+  const heading = document.createElement("div");
+  heading.className = "badge info";
+  heading.textContent = title;
+  heading.style.marginBottom = "8px";
+
+  box.appendChild(heading);
+  build(box);
+  host.appendChild(box);
+}
+
+function renderDiagnostics(data) {
+  const host = $("diagResult");
+  if (!host) return;
+
+  host.replaceChildren();
+  host.classList.remove("hidden");
+  $("diagEmpty").classList.add("hidden");
+
+  const hotspot = data.hotspot || {};
+
+  appendSection(host, "Sistema", (box) => {
+    appendKV(box, [
+      ["Host", data.hostname],
+      ["Distribución", data.distro],
+      ["Kernel", data.kernel],
+      ["Arquitectura", data.arch],
+      ["Encendido", data.uptime],
+      ["Backend Wi-Fi", backendLabel(data.backend)],
+      ["Ruta por defecto", data.hasDefaultRoute ? "sí" : "no"],
+      ["Generado", data.generatedAt ? timeOf(data.generatedAt) : ""],
+    ]);
+  });
+
+  appendSection(host, "Hotspot", (box) => {
+    appendKV(box, [
+      ["Estado", hotspot.enabled ? "encendido" : "apagado"],
+      ["Perfil", hotspot.profile],
+      ["Interfaz", hotspot.interface],
+      ["SSID", hotspot.ssid],
+      ["MAC efectiva", hotspot.mac],
+      ["MAC permanente", hotspot.permanentMac],
+      ["Modo", hotspot.mode],
+      ["Seguridad", hotspot.security],
+      ["IPv4", hotspot.ipv4Method],
+      ["Dirección", (hotspot.ipv4Address || []).join(", ")],
+      ["Banda / canal", [hotspot.band, hotspot.channel].filter(Boolean).join(" / ")],
+      ["Clientes", typeof hotspot.clients === "number" ? String(hotspot.clients) : ""],
+    ]);
+  });
+
+  const interfaces = Array.isArray(data.interfaces) ? data.interfaces : [];
+
+  if (interfaces.length) {
+    const box = document.createElement("div");
+    box.className = "section-note";
+
+    const heading = document.createElement("div");
+    heading.className = "badge info";
+    heading.textContent = "Interfaces Wi-Fi";
+    heading.style.marginBottom = "8px";
+    box.appendChild(heading);
+
+    const tableWrap = document.createElement("div");
+    tableWrap.className = "table-wrap";
+
+    const table = document.createElement("table");
+    table.innerHTML =
+      "<thead><tr><th>Interfaz</th><th>MAC</th><th>Driver</th><th>Modo</th><th>Estado</th><th>AP</th></tr></thead>";
+
+    const tbody = document.createElement("tbody");
+
+    interfaces.forEach((iface) => {
+      const row = document.createElement("tr");
+
+      [
+        [iface.name, "mono"],
+        [iface.mac, "mono"],
+        [iface.driver, ""],
+        [iface.mode, ""],
+        [
+          (iface.operState || "—") +
+            (iface.isHotspot ? " · hotspot" : "") +
+            (Array.isArray(iface.ipv4) && iface.ipv4.length ? " · " + iface.ipv4.join(", ") : ""),
+          "muted",
+        ],
+        [iface.apSupported, ""],
+      ].forEach(([text, className]) => {
+        const cell = document.createElement("td");
+        cell.className = className || "";
+        cell.textContent = text || "—";
+        row.appendChild(cell);
+      });
+
+      tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+    tableWrap.appendChild(table);
+    box.appendChild(tableWrap);
+    host.appendChild(box);
+  }
+
+  const services = Array.isArray(data.services) ? data.services : [];
+
+  if (services.length) {
+    appendSection(host, "Servicios", (box) => {
+      const chips = document.createElement("div");
+      chips.className = "chips";
+
+      services.forEach((service) => {
+        const chip = document.createElement("span");
+        chip.className = "chip " + (service.state === "active" ? "ok" : "bad");
+        chip.textContent = service.name.replace(/\.service$/, "") + ": " + (service.state || "desconocido");
+        chips.appendChild(chip);
+      });
+
+      box.appendChild(chips);
+    });
+  }
+
+  const tools = data.tools || {};
+
+  if (Object.keys(tools).length) {
+    appendSection(host, "Herramientas del sistema", (box) => {
+      const chips = document.createElement("div");
+      chips.className = "chips";
+
+      Object.keys(tools)
+        .sort()
+        .forEach((name) => {
+          const available = tools[name] !== "no instalado";
+          const chip = document.createElement("span");
+          chip.className = "chip " + (available ? "ok" : "");
+          chip.textContent = name + (available ? " ✓" : " ✗");
+          chip.title = tools[name];
+          chips.appendChild(chip);
+        });
+
+      box.appendChild(chips);
+    });
+  }
+
+  const properties = data.wifiProperties || {};
+
+  if (Object.keys(properties).length) {
+    appendSection(host, "Capacidades del hardware", (box) => {
+      const chips = document.createElement("div");
+      chips.className = "chips";
+
+      Object.keys(properties)
+        .sort()
+        .forEach((name) => {
+          const value = properties[name];
+          const chip = document.createElement("span");
+          chip.className = "chip " + (value === "yes" ? "ok" : value === "no" ? "bad" : "");
+          chip.textContent = name + ": " + value;
+          chips.appendChild(chip);
+        });
+
+      box.appendChild(chips);
+    });
+  }
+
+  const warnings = data.warnings || [];
+  const limitations = data.limitations || [];
+
+  if (warnings.length) {
+    appendSection(host, "Advertencias", (box) => {
+      const list = document.createElement("ul");
+      list.className = "list warn";
+
+      warnings.forEach((text) => {
+        const item = document.createElement("li");
+        item.textContent = text;
+        list.appendChild(item);
+      });
+
+      box.appendChild(list);
+    });
+  }
+
+  if (limitations.length) {
+    appendSection(host, "Limitaciones detectadas", (box) => {
+      const list = document.createElement("ul");
+      list.className = "list";
+
+      limitations.forEach((text) => {
+        const item = document.createElement("li");
+        item.textContent = text;
+        list.appendChild(item);
+      });
+
+      box.appendChild(list);
+    });
+  }
+
+  const sources = data.clientSources || {};
+  const sourceNames = Object.keys(sources);
+
+  if (sourceNames.length) {
+    appendSection(host, "Fuentes de datos de clientes", (box) => {
+      const chips = document.createElement("div");
+      chips.className = "chips";
+
+      sourceNames.forEach((name) => {
+        const chip = document.createElement("span");
+        chip.className = "chip " + (sources[name] ? "ok" : "bad");
+        chip.textContent = name + ": " + (sources[name] ? "disponible" : "no disponible");
+        chips.appendChild(chip);
+      });
+
+      box.appendChild(chips);
+    });
+  }
+}
+
+async function runDiagnostics() {
+  setLoading("diagBtn", true);
+
+  try {
+    const data = await request("diagnostics");
+    renderDiagnostics(data);
+    toast("Diagnóstico actualizado", "success");
+  } catch (error) {
+    if (error.status !== 401) toast(error.message, "error");
+  } finally {
+    setLoading("diagBtn", false);
+  }
+}
+
+/* ============================================================
+   TERMINAL
+   ============================================================ */
+
+async function runShell() {
+  const command = $("termInput").value.trim();
+
+  if (!command) {
+    toast("Comando vacío.", "warning");
+    return;
+  }
+
+  setLoading("termRunBtn", true);
+
+  try {
+    const data = await request("shell", { method: "POST", body: { command: command, timeout: 30 } });
+    const output = (data.stdout || "") + (data.stderr ? "\n[stderr]\n" + data.stderr : "");
+    const pre = $("termOutput");
+
+    pre.textContent =
+      (data.truncated ? "[salida truncada a 64 KB]\n" : "") +
+      (output || "(sin salida)") +
+      "\nexit=" + data.exitCode + " · " + data.durationMs + " ms";
+
+    pre.className = "terminal" + (data.exitCode !== 0 ? " err" : "");
+  } catch (error) {
+    if (error.status !== 401) toast(error.message, "error");
+  } finally {
+    setLoading("termRunBtn", false);
+  }
+}
+
+/* ============================================================
+   EXPLORADOR DE ARCHIVOS
+   ============================================================ */
+
+let currentPath = "/";
+let dnsRecords = [];
+let dnsUpstream = [];
+
+function renderFiles(data) {
+  const body = $("fileBody");
+  if (!body) return;
+
+  body.replaceChildren();
+  const entries = (data && Array.isArray(data.entries)) ? data.entries : [];
+
+  if (!entries.length) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 6;
+    cell.className = "muted";
+    cell.textContent = "Directorio vacío. Clic derecho para crear/subir.";
+    row.appendChild(cell);
+    body.appendChild(row);
+    return;
+  }
+
+  entries.forEach((entry) => {
+    const row = document.createElement("tr");
+    row.className = "file-row";
+    row.style.cursor = "pointer";
+
+    const name = document.createElement("td");
+    name.className = "file-path";
+    name.textContent = entry.name + (entry.isDir ? "/" : "");
+
+    const type = document.createElement("td");
+    type.textContent = entry.isDir ? "directorio" : "archivo";
+
+    const size = document.createElement("td");
+    size.className = "muted";
+    size.textContent = entry.isDir ? "—" : (entry.size + " B");
+
+    const mode = document.createElement("td");
+    mode.className = "muted mono";
+    mode.textContent = entry.mode || "—";
+
+    const mtime = document.createElement("td");
+    mtime.className = "muted";
+    mtime.textContent = entry.mtime ? timeOf(entry.mtime) : "—";
+
+    const actions = document.createElement("td");
+    actions.className = "muted tiny";
+    actions.textContent = entry.isDir ? "doble clic: abrir" : "doble clic: leer";
+
+    row.append(name, type, size, mode, mtime, actions);
+
+    // Doble clic: abrir directorio o leer archivo.
+    row.addEventListener("dblclick", () => {
+      if (entry.isDir) loadFiles(entry.path);
+      else readFile(entry.path);
+    });
+
+    // Clic derecho: menu contextual.
+    row.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+      showCtxMenu(event.clientX, event.clientY, entry);
+    });
+
+    body.appendChild(row);
+  });
+}
+
+let ctxTarget = null;
+
+function showCtxMenu(x, y, entry) {
+  ctxTarget = entry;
+  const menu = $("ctxMenu");
+  if (!menu) return;
+
+  menu.replaceChildren();
+
+  const addItem = (label, onClick, danger) => {
+    const item = document.createElement("div");
+    item.className = "ctx-item" + (danger ? " danger" : "");
+    item.textContent = label;
+    item.addEventListener("click", () => {
+      hideCtxMenu();
+      onClick();
+    });
+    menu.appendChild(item);
+  };
+
+  if (entry.isDir) {
+    addItem("Abrir", () => loadFiles(entry.path));
+  } else {
+    addItem("Leer / Editar", () => readFile(entry.path));
+    addItem("Descargar", () => { window.location.href = "/api/hotspot/file/download?path=" + encodeURIComponent(entry.path); });
+  }
+
+  addItem("Renombrar", () => {
+    const newName = window.prompt("Nuevo nombre:", entry.name);
+    if (!newName || newName === entry.name) return;
+    const parent = entry.path.substring(0, entry.path.lastIndexOf("/")) || "/";
+    moveFile(entry.path, parent + "/" + newName);
+  });
+
+  addItem("Mover a…", () => {
+    const target = window.prompt("Mover a (ruta completa):", entry.path);
+    if (target && target !== entry.path) moveFile(entry.path, target);
+  });
+
+  if (entry.isDir) {
+    addItem("Subir aquí", () => {
+      const input = $("fileUploadInput");
+      if (input) input.click();
+    });
+  }
+
+  addItem("Borrar", () => deleteFile(entry.path), true);
+
+  menu.style.left = x + "px";
+  menu.style.top = y + "px";
+  menu.classList.add("show");
+}
+
+function hideCtxMenu() {
+  const menu = $("ctxMenu");
+  if (menu) menu.classList.remove("show");
+  ctxTarget = null;
+}
+
+document.addEventListener("click", (event) => {
+  const menu = $("ctxMenu");
+  if (menu && !menu.contains(event.target)) hideCtxMenu();
+});
+
+document.addEventListener("contextmenu", (event) => {
+  // Evita el menu del navegador en el explorador.
+  if (event.target.closest("#fileWrap")) event.preventDefault();
+});
+
+async function loadFiles(path) {
+  if (path) currentPath = path;
+
+  $("filePath").value = currentPath;
+
+  try {
+    const data = await request("files?path=" + encodeURIComponent(currentPath));
+    renderFiles(data);
+  } catch (error) {
+    if (error.status !== 401) toast(error.message, "error");
+  }
+}
+
+async function readFile(path) {
+  try {
+    const data = await request("file?path=" + encodeURIComponent(path));
+    $("fileEditorPath").value = path;
+    $("fileEditor").value = data.content || "";
+    showNotice("fileNotice", "Archivo cargado: " + path, "success");
+  } catch (error) {
+    if (error.status !== 401) toast(error.message, "error");
+  }
+}
+
+async function saveFile() {
+  const path = $("fileEditorPath").value.trim();
+  const content = $("fileEditor").value;
+
+  if (!path) {
+    toast("Indica la ruta del archivo a guardar.", "warning");
+    return;
+  }
+
+  setLoading("fileSaveBtn", true);
+
+  try {
+    await request("file", { method: "POST", body: { path: path, content: content } });
+    toast("Archivo guardado", "success");
+    showNotice("fileNotice", "Archivo guardado: " + path, "success");
+    await loadFiles(currentPath);
+  } catch (error) {
+    if (error.status !== 401) toast(error.message, "error");
+  } finally {
+    setLoading("fileSaveBtn", false);
+  }
+}
+
+async function deleteFile(path) {
+  if (!window.confirm("¿Borrar " + path + "?")) return;
+
+  try {
+    await request("file?path=" + encodeURIComponent(path), { method: "DELETE" });
+    toast("Borrado", "success");
+    await loadFiles(currentPath);
+  } catch (error) {
+    if (error.status !== 401) toast(error.message, "error");
+  }
+}
+
+async function moveFile(path, target) {
+  if (!target) {
+    target = window.prompt("Nueva ruta para " + path + ":", path);
+  }
+
+  if (!target || target === path) return;
+
+  try {
+    await request("file/move", { method: "POST", body: { from: path, to: target } });
+    toast("Movido", "success");
+    await loadFiles(currentPath);
+  } catch (error) {
+    if (error.status !== 401) toast(error.message, "error");
+  }
+}
+
+/* ============================================================
+   DHCP Y DNS
+   ============================================================ */
+
+async function loadNetwork() {
+  try {
+    const data = await request("dhcp");
+    renderDhcp(data);
+  } catch (error) {
+    if (error.status !== 401) toast(error.message, "error");
+  }
+
+  try {
+    const data = await request("dns");
+    renderDns(data);
+  } catch (error) {
+    if (error.status !== 401) toast(error.message, "error");
+  }
+}
+
+function renderDhcp(data) {
+  const body = $("dhcpBody");
+
+  if (body) {
+    body.replaceChildren();
+    const leases = (data && Array.isArray(data.leases)) ? data.leases : [];
+
+    if (!leases.length) {
+      const row = document.createElement("tr");
+      const cell = document.createElement("td");
+      cell.colSpan = 5;
+      cell.className = "muted";
+      cell.textContent = "No hay concesiones DHCP registradas.";
+      row.appendChild(cell);
+      body.appendChild(row);
+    } else {
+      leases.forEach((lease) => {
+        const row = document.createElement("tr");
+
+        const mac = document.createElement("td");
+        mac.className = "mono";
+        mac.textContent = lease.mac || "—";
+
+        const ip = document.createElement("td");
+        ip.className = "mono";
+        ip.textContent = lease.ip || "—";
+
+        const host = document.createElement("td");
+        host.textContent = lease.hostname || "—";
+
+        const expires = document.createElement("td");
+        expires.className = "muted";
+        expires.textContent = lease.expired ? "caducada" : (lease.expiresIn || "—");
+
+        const source = document.createElement("td");
+        source.className = "muted tiny";
+        source.textContent = (lease.source || "").split("/").pop();
+
+        row.append(mac, ip, host, expires, source);
+        body.appendChild(row);
+      });
+    }
+  }
+
+  const procs = $("dhcpProcs");
+
+  if (procs) {
+    procs.textContent = (data && Array.isArray(data.processes) && data.processes.length)
+      ? data.processes.join("\n")
+      : "—";
+  }
+}
+
+function renderDns(data) {
+  const kv = $("dnsKv");
+
+  if (kv) {
+    kv.replaceChildren();
+
+    const pairs = [
+      ["Nameservers", (data && Array.isArray(data.nameservers)) ? data.nameservers.join(", ") : ""],
+      ["Hostname", data && data.hostname ? data.hostname : ""],
+    ];
+
+    const grid = document.createElement("div");
+    grid.className = "kv";
+
+    pairs.forEach(([key, value]) => {
+      if (!value) return;
+
+      const row = document.createElement("div");
+      const label = document.createElement("span");
+      label.textContent = key;
+      const content = document.createElement("span");
+      content.textContent = value;
+      row.append(label, content);
+      grid.appendChild(row);
+    });
+
+    kv.appendChild(grid);
+  }
+
+  const resolv = $("dnsResolv");
+
+  if (resolv) {
+    resolv.textContent = (data && data.configFiles && data.configFiles["/etc/resolv.conf"])
+      ? data.configFiles["/etc/resolv.conf"]
+      : "—";
+  }
+
+  if (data && Array.isArray(data.records)) {
+    dnsRecords = data.records.map((record) => ({
+      type: record.type || "A",
+      name: record.name || "",
+      value: record.value || "",
+    }));
+  } else {
+    dnsRecords = [];
+  }
+
+  if (data && Array.isArray(data.upstream)) {
+    dnsUpstream = data.upstream.slice();
+  } else {
+    dnsUpstream = [];
+  }
+
+  renderDnsRecords();
+  renderDnsUpstream();
+}
+
+function renderDnsRecords() {
+  const body = $("dnsRecordsBody");
+  if (!body) return;
+
+  body.replaceChildren();
+
+  if (!dnsRecords.length) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 4;
+    cell.className = "muted";
+    cell.textContent = "Sin registros locales.";
+    row.appendChild(cell);
+    body.appendChild(row);
+    return;
+  }
+
+  dnsRecords.forEach((record, index) => {
+    const row = document.createElement("tr");
+
+    const type = document.createElement("td");
+    type.textContent = record.type;
+
+    const name = document.createElement("td");
+    name.className = "mono";
+    name.textContent = record.name;
+
+    const value = document.createElement("td");
+    value.className = "mono";
+    value.textContent = record.value;
+
+    const source = document.createElement("td");
+    const remove = document.createElement("button");
+    remove.className = "btn-danger btn-sm";
+    remove.type = "button";
+    remove.textContent = "Quitar";
+    remove.addEventListener("click", () => {
+      dnsRecords.splice(index, 1);
+      renderDnsRecords();
+    });
+    source.appendChild(remove);
+
+    row.append(type, name, value, source);
+    body.appendChild(row);
+  });
+}
+
+function renderDnsUpstream() {
+  const host = $("dnsUpstreamChips");
+  if (!host) return;
+
+  host.replaceChildren();
+
+  dnsUpstream.forEach((server, index) => {
+    const chip = document.createElement("span");
+    chip.className = "chip";
+    chip.textContent = server + "  ";
+
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.textContent = "x";
+    remove.style.background = "transparent";
+    remove.style.border = "0";
+    remove.style.color = "inherit";
+    remove.style.cursor = "pointer";
+    remove.addEventListener("click", () => {
+      dnsUpstream.splice(index, 1);
+      renderDnsUpstream();
+    });
+
+    chip.appendChild(remove);
+    host.appendChild(chip);
+  });
+}
+
+async function applyDns() {
+  setLoading("dnsApplyBtn", true);
+
+  try {
+    const records = dnsRecords.map((record) => ({
+      type: record.type,
+      name: record.name,
+      value: record.value,
+    }));
+
+    await request("dns", {
+      method: "POST",
+      body: { upstream: dnsUpstream, records: records, apply: true },
+    });
+
+    toast("Configuracion DNS aplicada", "success");
+    showNotice("dnsNotice", "Configuracion DNS guardada y dnsmasq reiniciado.", "success");
+    await loadNetwork();
+  } catch (error) {
+    if (error.status !== 401) toast(error.message, "error");
+  } finally {
+    setLoading("dnsApplyBtn", false);
+  }
+}
+async function restartDhcp() {
+  if (!window.confirm("¿Reiniciar dnsmasq?")) return;
+
+  setLoading("dhcpRestartBtn", true);
+
+  try {
+    await request("dhcp/restart", { method: "POST" });
+    toast("dnsmasq reiniciado", "success");
+    await loadNetwork();
+  } catch (error) {
+    if (error.status !== 401) toast(error.message, "error");
+  } finally {
+    setLoading("dhcpRestartBtn", false);
+  }
+}
+
+/* ============================================================
+let eventSource = null;
+
+function connectEvents() {
+  if (eventSource) {
+    try { eventSource.close(); } catch (e) { // noop }
+  }
+
+  try {
+    eventSource = new EventSource("/api/hotspot/events");
+
+    eventSource.addEventListener("status", (event) => {
+      let data = null;
+      try { data = JSON.parse(event.data); } catch (e) { // noop }
+      if (data) {
+        state.lastStatus = data;
+        renderStatus(data);
+      }
+    });
+
+    eventSource.addEventListener("clients", (event) => {
+      let data = null;
+      try { data = JSON.parse(event.data); } catch (e) { // noop }
+      if (data) renderClients(data);
+    });
+
+    eventSource.addEventListener("pedido", (event) => {
+      let payload = null;
+
+      try { payload = JSON.parse(event.data); } catch (e) { // noop }
+
+      loadPedidos();
+
+      if (payload && payload.data) {
+        toast("Nuevo pedido #" + payload.data.id + ": " + (payload.data.nombre || ""), "success");
+      } else {
+        toast("Nuevo pedido registrado", "success");
+      }
+    });
+
+    eventSource.addEventListener("ready", () => { // noop });
+
+    eventSource.onerror = () => { // el navegador reintenta automaticamente };
+  } catch (error) { // noop }
+}
+
+function disconnectEvents() {
+  if (eventSource) {
+    try { eventSource.close(); } catch (e) { // noop }
+    eventSource = null;
+  }
+}
+
+
+/* ============================================================
+   PEDIDOS (solo lectura, endpoint publico existente)
+   ============================================================ */
+
+function renderPedidos(data) {
+  const host = $("pedidosList");
+  const banner = $("pedidosStatus");
+
+  if (!host || !banner) return;
+
+  banner.replaceChildren();
+
+  const dot = document.createElement("span");
+  dot.className = "dot " + (data && data.ok ? "on" : "off");
+
+  const text = document.createElement("span");
+  text.className = "sub";
+  text.textContent = data && typeof data.total === "number"
+    ? data.total + (data.total === 1 ? " pedido registrado" : " pedidos registrados")
+    : "Sin datos de pedidos";
+
+  banner.append(dot, text);
+  host.replaceChildren();
+
+  const pedidos = (data && Array.isArray(data.pedidos)) ? data.pedidos : [];
+
+  if (!pedidos.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.textContent = "No hay pedidos registrados.";
+    host.appendChild(empty);
+    return;
+  }
+
+  const tableWrap = document.createElement("div");
+  tableWrap.className = "table-wrap";
+
+  const table = document.createElement("table");
+  table.innerHTML = "<thead><tr><th>#</th><th>Nombre</th><th>Agregados</th><th>Fecha</th></tr></thead>";
+
+  const tbody = document.createElement("tbody");
+
+  pedidos.forEach((pedido) => {
+    const row = document.createElement("tr");
+
+    const id = document.createElement("td");
+    id.className = "mono";
+    id.textContent = pedido.id !== undefined ? String(pedido.id) : "—";
+
+    const name = document.createElement("td");
+    name.textContent = pedido.nombre || "—";
+
+    const extras = document.createElement("td");
+    extras.className = "muted";
+    extras.textContent = Array.isArray(pedido.agregados) && pedido.agregados.length
+      ? pedido.agregados.join(", ")
+      : "—";
+
+    const date = document.createElement("td");
+    date.className = "muted";
+    date.textContent = pedido.fecha || "—";
+
+    row.append(id, name, extras, date);
+    tbody.appendChild(row);
+  });
+
+  table.appendChild(tbody);
+  tableWrap.appendChild(table);
+  host.appendChild(tableWrap);
+}
+
+async function loadPedidos() {
+  setLoading("pedidosBtn", true);
+
+  try {
+    const response = await fetch("/pedido/", {
+      cache: "no-store",
+      credentials: "same-origin",
+      headers: { Accept: "application/json" },
+    });
+
+    const raw = await response.text();
+    let data = null;
+
+    try {
+      data = JSON.parse(raw);
+    } catch (error) {
+      throw new Error("El servidor devolvió una respuesta no válida al leer pedidos.");
+    }
+
+    renderPedidos(data);
+  } catch (error) {
+    const banner = $("pedidosStatus");
+
+    if (banner) {
+      banner.replaceChildren();
+      const dot = document.createElement("span");
+      dot.className = "dot off";
+      const text = document.createElement("span");
+      text.className = "sub";
+      text.textContent = error.message;
+      banner.append(dot, text);
+    }
+
+    toast(error.message, "error");
+  } finally {
+    setLoading("pedidosBtn", false);
+  }
+}
+
+/* ============================================================
+   EVENTOS
+   ============================================================ */
+
+function markDirtyOnEdit(ids) {
+  ids.forEach((id) => {
+    const node = $(id);
+    if (!node) return;
+
+    node.addEventListener("input", () => {
+      node.dataset.dirty = "1";
+    });
+
+    node.addEventListener("change", () => {
+      node.dataset.dirty = "1";
+    });
+  });
+}
+
+function wireEvents() {
+  $("loginForm").addEventListener("submit", login);
+  $("configForm").addEventListener("submit", saveConfig);
+  $("macForm").addEventListener("submit", applyMAC);
+
+  $("refreshBtn").addEventListener("click", () => refreshAll(true));
+  $("enableBtn").addEventListener("click", () => toggleHotspot("enable"));
+  $("disableBtn").addEventListener("click", () => toggleHotspot("disable"));
+  $("clientsRefreshBtn").addEventListener("click", async () => {
+    setLoading("clientsRefreshBtn", true);
+    try {
+      await loadClients();
+      markUpdated();
+    } catch (error) {
+      if (error.status !== 401) toast(error.message, "error");
+    } finally {
+      setLoading("clientsRefreshBtn", false);
+    }
+  });
+
+  $("diagBtn").addEventListener("click", runDiagnostics);
+  $("pedidosBtn").addEventListener("click", loadPedidos);
+  $("logoutBtn").addEventListener("click", logout);
+
+  $("macRandomBtn").addEventListener("click", () => {
+    $("macInput").value = generateRandomMAC();
+    clearNotice("macNotice");
+  });
+
+  const termRunBtn = $("termRunBtn");
+  if (termRunBtn) termRunBtn.addEventListener("click", runShell);
+  const termInput = $("termInput");
+  if (termInput) termInput.addEventListener("keydown", (event) => { if (event.key === "Enter") runShell(); });
+
+  const fileGoBtn = $("fileGoBtn");
+  if (fileGoBtn) fileGoBtn.addEventListener("click", () => loadFiles((($("filePath").value || "").trim()) || "/"));
+  const fileRefreshBtn = $("fileRefreshBtn");
+  if (fileRefreshBtn) fileRefreshBtn.addEventListener("click", () => loadFiles(currentPath));
+  const fileUpBtn = $("fileUpBtn");
+  if (fileUpBtn) fileUpBtn.addEventListener("click", () => {
+    const parent = currentPath.replace(/\/+$/, "").split("/").slice(0, -1).join("/") || "/";
+    loadFiles(parent === "" ? "/" : parent);
+  });
+  const fileReadBtn = $("fileReadBtn");
+  if (fileReadBtn) fileReadBtn.addEventListener("click", () => {
+    const path = $("fileEditorPath").value.trim();
+    if (path) readFile(path);
+  });
+  const fileSaveBtn = $("fileSaveBtn");
+  if (fileSaveBtn) fileSaveBtn.addEventListener("click", saveFile);
+  const fileDeleteBtn = $("fileDeleteBtn");
+  if (fileDeleteBtn) fileDeleteBtn.addEventListener("click", () => {
+    const path = $("fileEditorPath").value.trim();
+    if (path) deleteFile(path);
+  });
+  const fileUploadBtn = $("fileUploadBtn");
+  if (fileUploadBtn) fileUploadBtn.addEventListener("click", () => {
+    const input = $("fileUploadInput");
+    if (!input || !input.files || !input.files.length) { toast("Selecciona un archivo.", "warning"); return; }
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = String(reader.result).split(",")[1] || "";
+      const path = (currentPath.replace(/\/+$/, "") || "/") + "/" + file.name;
+      try {
+        await request("file/upload", { method: "POST", body: { path: path, data: base64 } });
+        toast("Subido: " + file.name, "success");
+        await loadFiles(currentPath);
+      } catch (error) { if (error.status !== 401) toast(error.message, "error"); }
+    };
+    reader.readAsDataURL(file);
+  });
+
+  const netRefreshBtn = $("netRefreshBtn");
+  if (netRefreshBtn) netRefreshBtn.addEventListener("click", loadNetwork);
+
+  const dnsRecAddBtn = $("dnsRecAddBtn");
+  if (dnsRecAddBtn) dnsRecAddBtn.addEventListener("click", () => {
+    const name = $("dnsRecName").value.trim();
+    const value = $("dnsRecValue").value.trim();
+    const type = $("dnsRecType").value;
+    if (!name) { toast("Indica el nombre del registro.", "warning"); return; }
+    dnsRecords.push({ type: type, name: name, value: value });
+    $("dnsRecName").value = "";
+    $("dnsRecValue").value = "";
+    renderDnsRecords();
+  });
+
+  const dnsUpstreamAddBtn = $("dnsUpstreamAddBtn");
+  if (dnsUpstreamAddBtn) dnsUpstreamAddBtn.addEventListener("click", () => {
+    const value = $("dnsUpstreamInput").value.trim();
+    if (!value) { toast("Indica el servidor DNS.", "warning"); return; }
+    if (dnsUpstream.indexOf(value) === -1) dnsUpstream.push(value);
+    $("dnsUpstreamInput").value = "";
+    renderDnsUpstream();
+  });
+
+  const dnsApplyBtn = $("dnsApplyBtn");
+  if (dnsApplyBtn) dnsApplyBtn.addEventListener("click", applyDns);
+  const dhcpRestartBtn = $("dhcpRestartBtn");
+  if (dhcpRestartBtn) dhcpRestartBtn.addEventListener("click", restartDhcp);
+
+  function activateTab(name) {
+    if (!name) name = "estado";
+    const tab = document.querySelector('.tab[data-tab="' + name + '"]');
+    if (!tab) return;
+    document.querySelectorAll(".tab[data-tab]").forEach((item) => {
+      if (item.closest(".card[data-tab]")) return;
+      item.classList.remove("active");
+    });
+    tab.classList.add("active");
+    document.querySelectorAll(".card[data-tab]").forEach((card) => card.classList.remove("active"));
+    const board = document.querySelector('.card[data-tab="' + name + '"]');
+    if (board) board.classList.add("active");
+    const panel = $("tab-" + name);
+    if (panel) panel.classList.add("active");
+  }
+
+  // Sub-pestañas internas (DHCP/DNS) dentro de la tarjeta "red".
+  document.querySelectorAll(".card[data-tab] .tabs .tab").forEach((tab) => {
+    tab.addEventListener("click", (event) => {
+      const group = tab.closest(".tabs");
+      group.querySelectorAll(".tab").forEach((item) => item.classList.remove("active"));
+      tab.classList.add("active");
+      const host = tab.closest(".card[data-tab]");
+      host.querySelectorAll(".tab-panel").forEach((panel) => panel.classList.remove("active"));
+      const sub = $("tab-" + tab.dataset.tab);
+      if (sub) sub.classList.add("active");
+    });
+  });
+
+  $("macInterface").addEventListener("change", async (event) => {
+    state.macInterface = event.target.value;
+    delete event.target.dataset.dirty;
+
+    try {
+      await loadMAC();
+    } catch (error) {
+      if (error.status !== 401) toast(error.message, "error");
+    }
+  });
+
+  markDirtyOnEdit(["cfgSSID", "cfgPassword", "cfgInterface", "cfgIPv4", "cfgSecurity"]);
+
+  $("cfgSecurity").addEventListener("change", syncSecurityFields);
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && state.authenticated && !state.busy) refreshAll(false);
+  });
+}
+
+/* ============================================================
+   ARRANQUE
+   ============================================================ */
+
+async function bootstrap() {
+  wireEvents();
+
+  try {
+    await request("session");
+    await startApp();
+  } catch (error) {
+    if (error.status !== 401) {
+      showNotice("loginNotice", error.message, "warning");
+    }
+  }
+}
+
+bootstrap();
+</script>
+<div class="ctx-menu" id="ctxMenu"></div>
+</body>
+</html>

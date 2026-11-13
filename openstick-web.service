@@ -1,0 +1,19 @@
+[Unit]
+Description=OpenStick Go Web Server
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/openstick-web
+ExecStart=/opt/openstick-web/server
+Restart=always
+RestartSec=3
+KillSignal=SIGTERM
+TimeoutStopSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
